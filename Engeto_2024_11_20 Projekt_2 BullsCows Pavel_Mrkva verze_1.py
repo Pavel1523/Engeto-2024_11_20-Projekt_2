@@ -40,7 +40,22 @@ def mnozna_cisla(**kwargs):
         if hodnota == 1:
             vysledky.append(klic)  # jednotne cislo
         else:
-            vysledky.append(klic + "s")  # mnozne cislo
+            # Pokud slovo konci na 's', 'x', 'z' nebo 'ch', 'sh'
+
+            if klic.endswith(("s", "x", "z")) or klic.endswith(("ch", "sh")):
+                vysledky.append(klic + "es")  # mnozne cislo
+            # Pokud slovo konci na 'y', ale před 'y' je samohláska (a, e, i, o, u)
+
+            elif klic.endswith("y") and klic[-2] in "aeiou":
+                vysledky.append(klic + "s")  # mnozne cislo
+            # Pokud slovo konci na 'y' a před 'y' je souhlaska, změníme 'y' na 'ies'
+
+            elif klic.endswith("y"):
+                vysledky.append(klic + "ies")  # mnozne cislo
+            # Ve vsech ostatnich pripadech pridame jen 's'
+
+            else:
+                vysledky.append(klic + "s")  # mnozne cislo
     return vysledky if len(vysledky) > 1 else vysledky[0]
 
 
@@ -50,10 +65,7 @@ def prevod_sec_min(cas):
     return minuta, vterina
 
 
-if __name__ == "__main__":
-
-    # zahajeni hry
-
+def bulls_and_cows():
     hledane_cislo = gen_cisla()  # viz popis funkce
     pokus_max = 20  # maximalni pocet pokusu k uhodnuti generovaneho cisla
     att = mnozna_cisla(attempt=pokus_max)  # viz popis funkce
@@ -79,7 +91,7 @@ if __name__ == "__main__":
     while pokus < pokus_max:  # start procedury hadani generovaneho cisla
         pokus += 1
         pokus_rest = pokus_max - pokus
-        jed_1 = mnozna_cisla(attempt=pokus_rest)  # viz popis funkce
+        jed_1 = mnozna_cisla(attempt=pokus_rest)
 
         user_volba = input("Enter a number: ")  # volba cisla uzivatelem
         if not (
@@ -87,7 +99,7 @@ if __name__ == "__main__":
             and len(user_volba) == 4
             and len(set(user_volba)) == 4
             and user_volba[0] != "0"
-        ):  # Kontrola, zda je vstup platný - ciselne znaky na vstupu, 4 cisla na vstupu, 4 unikatni cisla na vstupu, na zacatku neni nula
+        ):  # Kontrola, zda je vstup platny - ciselne znaky na vstupu, 4 cisla na vstupu, 4 unikatni cisla na vstupu, na zacatku neni nula
             print(
                 f"Wrong number!\nIt must be a 4-digit number with unique digits that cannot start with a 'zero'."
             )
@@ -97,11 +109,9 @@ if __name__ == "__main__":
             continue
         print("Your enter is:  ", user_volba)
 
-        bulls, cows = pocitani_byku_a_krav(
-            hledane_cislo, user_volba
-        )  # viz popis funkce
+        bulls, cows = pocitani_byku_a_krav(hledane_cislo, user_volba)
 
-        jed_2, jed_3 = mnozna_cisla(bull=bulls, cow=cows)  # viz popis funkce
+        jed_2, jed_3 = mnozna_cisla(bull=bulls, cow=cows)
         print(
             f"Result:{' ' *10}{jed_2}: {bulls}, {jed_3}: {cows}\n"
             f"There are still {pokus_max - pokus} {jed_1} left.\n"
@@ -123,3 +133,9 @@ if __name__ == "__main__":
     minute, second = prevod_sec_min(doba_hry)
     print(f"Game time:{' ' * 7}{minute} min. and {second} sec..")
     print(f"{'-' * 85}")
+
+
+if __name__ == "__main__":
+    # zahajeni hry
+
+    bulls_and_cows()
