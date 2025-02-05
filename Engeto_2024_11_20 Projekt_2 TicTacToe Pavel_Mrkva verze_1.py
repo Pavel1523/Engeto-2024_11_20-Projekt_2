@@ -53,30 +53,21 @@ def vse_vyplneno(hraci_plocha):
 
 
 def tah_hrace(hrac, hraci_plocha):
-    """Ziska tah hrace, pricemz kontroluje, jestli je zhracem zvolene pole volne."""
-    while True:
-        try:  # kontroluje cislo zadane hracem
-            tah = (
-                int(input(f"Player {hrac} | Please enter your move number: "))
-                - 1
-            )  # vyzve hrace k zadani cisla pole
-            rada, sloupec = divmod(
-                tah, 3
-            )  # pomoci funkce divmod() priradi tahu hrace cislo pole
-            if (
-                tah < 0 or tah >= 9
-            ):  # kontroluje cislo pole zvolene hracem - musi byt od 1 do 9
-                print("Invalid input. Please choose a number between 1 and 9.")
-            elif (
-                hraci_plocha[rada][sloupec] != " "
-            ):  # kontroluje, zda je pole volne
-                print("That spot is already taken. Choose another one.")
-            else:
-                return rada, sloupec  # vraci koordinaty pole
-        except (
-            ValueError
-        ):  # vraci cyklus na zacatek po zadani chybneho cisla pole
-            print("Invalid input. Please enter a number.")
+    tah = input(f"Player {hrac} | Enter your move (1-9): ")
+    while not (tah.isdigit() and 1 <= int(tah) <= 9):
+        print("Invalid input. Choose a number between 1 and 9.")
+        tah = input(f"Player {hrac} | Enter your move (1-9): ")
+    tah = int(tah) - 1
+    radek, sloupec = divmod(tah, 3)
+    while hraci_plocha[radek][sloupec] != " ":
+        print("This spot is already taken. Choose another one.")
+        tah = input(f"Player {hrac} | Enter your move (1-9): ")
+        while not (tah.isdigit() and 1 <= int(tah) <= 9):
+            print("Invalid input. Choose a number between 1 and 9.")
+            tah = input(f"Player {hrac} | Enter your move (1-9): ")
+        tah = int(tah) - 1
+        radek, sloupec = divmod(tah, 3)
+    return radek, sloupec
 
 
 def tic_tac_toe():
@@ -95,7 +86,7 @@ def tic_tac_toe():
         )  # vraci cilso pole -> koordinaty
         hraci_plocha[rada][
             sloupec
-        ] = hrac  # yapise znak hrace do zvoleneho pole
+        ] = hrac  # zapise znak hrace do zvoleneho pole
         if kontrola_viteze(hraci_plocha, hrac):
             print_hraci_plocha(hraci_plocha)
             print(f"Congratulations, the player {hrac} WON!")
